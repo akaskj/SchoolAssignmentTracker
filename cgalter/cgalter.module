@@ -1,0 +1,31 @@
+<?php
+// function cgalter_form_alter(&$form, &$form_state, $form_id) {
+//   dsm($form_id);
+// }
+function cgalter_form__cgproduct_update_form_alter(&$form, &$form_state, $form_id) {
+
+  dsm($form_state);
+
+  $form['rating'] = array(
+    '#type' => 'select',
+    '#description' => 'Your rating for this product',
+    '#options' => array(0 => '--SELECT--', 1 => '*', 2 => '**', 3 => '***'),
+    '#default_value' => 0,
+  );
+  $form['submit']['#weight'] = 99;
+  $form['pid']['#element_validate'][] = '_cgalter_int';
+  array_unshift($form['#validate'], '_cgalter_validate');
+  array_unshift($form['#submit'], '_cgalter_submit');
+}
+
+function _cgalter_int($element, &$form_state, $form) {
+  dsm('element validate in cgalter');
+}
+
+function _cgalter_validate($form, &$form_state) {
+  dsm('validate in cgalter is being called');
+}
+
+function _cgalter_submit($form, &$form_state) {
+  dsm('submit handler in cgalter');
+}

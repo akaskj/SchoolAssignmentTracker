@@ -1,0 +1,33 @@
+<?php
+function userdetails_user_view($account, $view_mode, $langcode) {
+  global $user;
+  $a = variable_get($user->name);
+  if (isset($user->roles[5])) {
+    if ($a == 1) {
+      $account->content['summary'][] = array(
+      '#markup' => '<div><h2><b>Subject</b></h2></div><div><h1>C++</h1></div>');
+    }
+    elseif ($a==2) {
+      $account->content['summary'][] = array(
+      '#markup' => '<div><h2><b>Subject</b></h2></div><div><h1>.NET</h1></div>');
+    }
+    elseif ($a == 3) {
+      $account->content['summary'][] = array(
+      '#markup' => '<div><h2><b>Subject</b></h2></div><div><h1>Drupal</h1></div>');
+    }
+  }
+  if (isset($user->roles[6])) {
+    if ($a == 1) {
+      $account->content['summary'][] = array(
+      '#markup' => '<div><h2><b>Course</b></h2></div><div><h1>Beginner</h1></div>');
+    }
+    elseif ($a == 2) {
+      $account->content['summary'][] = array(
+      '#markup' => '<div><h2><b>Course</b></h2></div><div><h1>Senior</h1></div>');
+    }
+    elseif ($a == 3) {
+      $account->content['summary'][] = array(
+      '#markup' => '<div><h2><b>Course</b></h2></div><div><h1>Advanced</h1></div>');
+    }
+  }
+}

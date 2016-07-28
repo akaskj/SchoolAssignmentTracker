@@ -1,0 +1,3 @@
+name=useralter
+descripton=edits the page while creating a user
+core = 7.x

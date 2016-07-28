@@ -1,0 +1,78 @@
+<?php
+function select_menu() {
+  $items = array();
+  $items['select/%/%'] = array(
+    'title' => 'select module',
+    'description' => 'test the page',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('select_form' , 1 , 2),
+    'access arguments' => array('access select page'),
+  );
+  return $items;
+}
+function select_form($form_id, $form_state, $t, $s) {
+  $form = array();
+
+  if ($t==5) {
+     $form['val'] = array(
+      '#value' => $t
+    );
+    $form['welcome'] = array(
+      '#markup' => ('<h1>Welcome to subject select </h1>'),
+    );
+    $form['subject'] = array(
+      '#type' => 'select',
+      '#title' => 'Select subject',
+      '#description' => 'Choose which subject the teacher teaches',
+      '#options' => array(
+        1 => 'C++',
+        2 => 'DotNet',
+        3 => 'Drupal',
+       )
+    );
+  }
+  elseif ($s==6) {
+    $form['val'] = array(
+    '#value' => $s
+  );
+  $form['welcome'] = array(
+    '#markup' => ('<h1>Welcome to course select </h1>')
+  );
+  $form['course'] = array(
+    '#type' => 'select',
+    '#title' => 'Select Course',
+    '#description' => 'Choose which course the student is opted',
+    '#options' => array(
+      1 => 'Beginner',
+      2 => 'Senior',
+      3 => 'Advanced',
+      )
+    );
+  }
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => 'Save',
+  );
+  return $form;
+}
+function select_permission() {
+  $items = array();
+  $items['access select page'] = array(
+    'title' => 'Allow access to selection pages',
+    'description' => 'changes permission',
+  );
+  return $items;
+}
+
+function select_form_submit($form, &$form_state) {
+  if ($form_state['complete form']['val']['#value'] == 5) {
+  $get= variable_get('username');
+  variable_set($get , $form_state['values']['subject']);
+  }
+  if ($form_state['complete form']['val']['#value']==6) {
+    $get= variable_get('username');
+    variable_set($get , $form_state['values']['course']);
+  }
+  $form_state['redirect'] = 'admin/people';
+  drupal_set_message(t('User successfully created.'), 'status');
+}

@@ -1,0 +1,23 @@
+<?php
+function useralter_form_user_register_form_alter(&$form , &$form_state , $form_id) {
+  $form['#submit'][]= 'useralter_submit';
+  array_unshift($form['#validate'], 'useralter_validate');
+}
+function useralter_form_comment_node_advanced_assignments_form_alter(&$form , &$form_state , $form_id) {
+  $form['rating'] = array(
+    '#type' => 'select',
+    '#description' => 'Your rating for this product',
+    '#options' => array(0 => '--SELECT--', 1 => '*', 2 => '**', 3 => '***'),
+    '#default_value' => 0,
+  );
+}
+function useralter_submit($form, &$form_state) {
+  variable_set('username' , $form_state['input']['name']);
+  $form_state['redirect'] = 'select/' . $form_state['values']['roles']['5'] . '/' . $form_state['values']['roles']['6'];
+
+}
+function useralter_validate($form, &$form_state) {
+  if ($form_state['values']['roles']['5']==5 && $form_state['values']['roles']['6']) {
+    form_set_error($name = 'edit-roles' , $message = 'select either teacher or student / cannot select both');
+  }
+}

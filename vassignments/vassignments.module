@@ -1,0 +1,251 @@
+<?php
+
+function vassignments_menu() {
+  $items = array();
+  $items['view-assignment'] = array(
+    'title' => 'View assignments',
+    'description' => 'click to view assignments',
+    'page callback' => '_assignment_page',
+    'access arguments' => array('access_vassignments_settings'),
+    'type' => MENU_NORMAL_ITEM,
+    'menu_name' => 'user-menu',
+  );
+  $items['completed-assignments'] = array(
+    'title' => 'Completed assignments',
+    'description' => 'click to view completed assignments',
+    'page callback' => '_completed_page',
+    'access arguments' => array('access_vassignments_settings'),
+    'type' => MENU_NORMAL_ITEM,
+    'menu_name' => 'main-menu',
+  );
+  return $items;
+}
+
+/*function to redirect user to specific assignment page*/
+
+function _assignment_page() {
+  global $user;
+  $user -> name;
+  $user_name = variable_get($user->name);
+  if ($user_name == 1) {
+    drupal_goto("beginner-assignments");
+  }
+  elseif ($user_name == 2) {
+    drupal_goto("senior-assignments");
+  }
+  elseif ($user_name == 3) {
+    drupal_goto("advanced-assignments");
+  }
+  else {
+    drupal_deliver_page(MENU_ACCESS_DENIED);
+  }
+}
+
+/*function to redirect users to completed assignment pages*/
+
+function _completed_page() {
+  global $user;
+  $user->name;
+  $user_name = variable_get($user->name);
+  if ($user_name == 1) {
+    drupal_goto("completed-beginner-assignmrnts");
+  }
+  elseif ($user_name == 2) {
+    drupal_goto("completed-senior-assignmrnts");
+  }
+  elseif ($user_name == 3) {
+    drupal_goto("completed-advanced-assignmrnts");
+  }
+  else {
+    drupal_deliver_page(MENU_ACCESS_DENIED);
+  }
+}
+
+/*function display a link to submit assignment in each assignmet*/
+
+function vassignments_node_view($node, $view_mode) {
+  variable_set('assignName' , $node->title);
+  variable_set('assignType' , $node->type);
+  global $user;
+  if (isset($user->name)) {
+    $user->name;
+    $user_name = variable_get($user->name);
+    if (isset($user->roles[6])) {
+      if ($node->type != 'advanced_assignments' && $node->type != 'beginner_assignment' && $node->type != 'senior_assignment') {
+        if ($user_name == 1) {
+          $node_id = $node->nid;
+          $user_uid = $user->uid;
+          $un = $node_id . $user_uid . 'u';
+          $vali = variable_get($un);
+          if ($vali == 'submitted' ) {
+            drupal_set_message(check_plain('Assignment already submitted') , $type = 'warning');
+          }
+          else {
+            variable_set('nodeID' , $node->nid);
+            $node->content['assignment_link'] = array(
+              "#markup" => '<a href=http://localhost/node/add/beginner-assignment>Click to submit assignment</a>',
+              "#weight" => 100);
+          }
+        }
+        elseif ($user_name == 2) {
+          $node_id = $node->nid;
+          $user_uid = $user->uid;
+          $un = $node_id . $user_uid . 'u';
+          $vali = variable_get($un);
+          if ($vali == 'submitted') {
+            drupal_set_message(check_plain('Assignment already submitted') , $type='warning');
+          }
+          else {
+            variable_set('nodeID' , $node->nid);
+            $node->content['assignment_link'] = array(
+              "#markup" => '<a href=http://localhost/node/add/senior-assignment>Click to submit assignment</a>',
+              "#weight" => 100);
+          }
+        }
+        elseif ($user_name == 3) {
+          $node_id = $node->nid;
+          $user_uid = $user->uid;
+          $un = $node_id . $user_uid . 'u';
+          $vali = variable_get($un);
+          if ($vali == 'submitted') {
+            drupal_set_message(check_plain('Assignment already submitted') , $type='warning');
+          }
+          else {
+            variable_set('nodeID' , $node->nid);
+            $node->content['assignment_link'] = array(
+              "#markup" => '<a href=http://localhost/node/add/advanced-assignments>Click to submit assignment</a>',
+              "#weight" => 100);
+          }
+        }
+        else {
+          drupal_deliver_page(MENU_ACCESS_DENIED);
+        }
+        return $node;
+      }
+    }
+  }
+}
+
+/*function to prefill Assignment name and Subject field*/
+
+function vassignments_form_beginner_assignment_node_form_alter(&$form , &$form_state , $form_id) {
+  $form['title']['#default_value'] = variable_get('assignName');
+  $form['title']['#attributes']['disabled'] = TRUE;
+  $assign_type = variable_get('assignType');
+    if ( $assign_type == 'cplus' ) {
+      $form['field_select_subject']['und']['#default_value'] = array(4);
+      $form['field_select_subject']['und']['#attributes']['disabled'] = TRUE;
+    }
+   if ($assign_type == 'dotnet') {
+     $form['field_select_subject']['und']['#default_value'] = array(5);
+     $form['field_select_subject']['und']['#attributes']['disabled'] = TRUE;
+   }
+   if ( $assign_type=='drupal') {
+     $form['field_select_subject']['und']['#default_value'] = array(6);
+     $form['field_select_subject']['und']['#attributes']['disabled'] = TRUE;
+   }
+   $form['#submit'][] = 'vassignments_submit';
+   return $form;
+}
+
+/*function to prefill Assignment name and Subject field*/
+
+function vassignments_form_senior_assignment_node_form_alter(&$form , &$form_state , $form_id) {
+  $form['title']['#default_value'] = variable_get('assignName');
+  $form['title']['#attributes']['disabled'] = TRUE;
+  $assign_type=variable_get('assignType');
+  if ( $assign_type == 'cplus') {
+    $form['field_select_senior_subject']['und']['#default_value'] = array(4);
+    $form['field_select_senior_subject']['und']['#attributes']['disabled'] = TRUE;
+  }
+  if ( $assign_type == 'dotnet') {
+    $form['field_select_senior_subject']['und']['#default_value'] = array(5);
+    $form['field_select_senior_subject']['und']['#attributes']['disabled'] = TRUE;
+  }
+  if ( $assign_type == 'drupal') {
+    $form['field_select_senior_subject']['und']['#default_value'] = array(6);
+    $form['field_select_senior_subject']['und']['#attributes']['disabled'] = TRUE;
+  }
+  $form['#submit'][] = 'vassignments_submit';
+  return $form;
+
+}
+
+/*function to prefill Assignment name and Subject field*/
+
+function vassignments_form_advanced_assignments_node_form_alter(&$form , &$form_state , $form_id) {
+  $form['title']['#default_value'] = variable_get('assignName');
+  $form['title']['#attributes']['disabled'] = TRUE;
+  $assign_type = variable_get('assignType');
+  if ( $assign_type == 'cplus') {
+    $form['field_select_advanced_subject']['und']['#default_value'] = array(4);
+    $form['field_select_advanced_subject']['und']['#attributes']['disabled'] = TRUE;
+  }
+  if ( $assign_type == 'dotnet') {
+    $form['field_select_advanced_subject']['und']['#default_value'] = array(5);
+    $form['field_select_advanced_subject']['und']['#attributes']['disabled'] = TRUE;
+  }
+  if ( $assign_type == 'drupal') {
+    $form['field_select_advanced_subject']['und']['#default_value'] = array(6);
+    $form['field_select_advanced_subject']['und']['#attributes']['disabled'] = TRUE;
+  }
+  $form['#submit'][] = 'vassignments_submit';
+  return $form;
+}
+
+/*function to create a custom block*/
+
+function vassignments_block_info() {
+  $blocks = array();
+  $blocks['user_role_summary'] = array(
+    'info' => t('User Role Summary')
+  );
+  return $blocks;
+}
+
+/*function to add content to the block */
+
+function vassignments_block_view($delta = 0) {
+  $block = array();
+  $block['subject'] = "User Role Summary";
+  global $user;
+  if (isset($user->name)) {
+    $block['content'] = 'Welcome ,<a href = http://localhost/user>' . $user->name . '</a>';
+  }
+   return $block;
+}
+
+/*Submit handler to display a success message and redirect*/
+
+function vassignments_submit($form, &$form_state) {
+  global $user;
+  if (isset($user->uid)) {
+    $node_id = variable_get('nodeID');
+    $user_uid = $user->uid;
+    $un = $node_id . $user_uid . 'u';
+    variable_set($un , 'submitted');
+    global $user;
+    $user->name;
+    $user_name = variable_get($user->name);
+    if ($user_name == 1) {
+      drupal_set_message(t('Assignment successfully submitted'));
+    }
+    elseif ($user_name == 2) {
+      drupal_set_message(t('Assignment successfully submitted'));
+    }
+    elseif ($user_name==3) {
+      drupal_set_message(t('Assignment successfully submitted'));
+    }
+  }
+}
+
+/*function to assign permission to the module*/
+
+function vassignments_permission() {
+  $items = array();
+  $items['access_vassignments_settings'] = array(
+    'title' => 'Allow access to view assignments',
+    'description' => 'Setting to view assignments',
+  );
+  return $items;
+}

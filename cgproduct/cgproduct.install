@@ -1,0 +1,39 @@
+<?php
+/**
+ * Implements hook_schema().
+ */
+
+function cgproduct_schema() {
+  $schema['product'] = array(
+    'description' => 'Stores product info.',
+    'fields' => array(
+      'pid' => array(
+        'description' => 'Primary Key: Unique ProductID.',
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'penable' => array(
+        'type' => 'int',
+      ),
+      'pname' => array(
+        'type' => 'varchar',
+        'length' => 128,
+      ),
+      'pcolor' => array(
+        'type' => 'varchar',
+        'length' => 128,
+      ),
+      'ptype' => array(
+        'type' => 'varchar',
+        'length' => 128,
+      ),
+      'pdescription' => array(
+        'type' => 'varchar',
+       'length' => 256,
+      ),
+    ),
+    'primary key' => array('pid'),
+  );
+  return $schema;
+}

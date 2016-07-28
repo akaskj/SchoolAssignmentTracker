@@ -1,0 +1,5 @@
+name = userdeatils
+description = Display user details
+core = 7.x
+version = "7.x-1.x-dev"
+package = userdetails

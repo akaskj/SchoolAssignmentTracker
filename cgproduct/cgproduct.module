@@ -1,0 +1,174 @@
+<?php
+/**
+ * @file
+ * This contains all the hook implementations.
+ */
+// Implementation of hook_menu().
+function cgproduct_menu() {
+  $items = array();
+  $items['admin/cgproduct'] = array(
+    'title' => 'Cgproduct module',
+    'description' => 'test the page',
+    //'page callback' => '_cgproduct_settings_page',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('_cgproduct_settings_form'),
+    //'access callback' => '_cgproduct_give_access',
+    'access arguments' => array('access cgproduct settings'),
+    //'title callback' => '_cgproduct_display_title',
+    //'type' => MENU_NORMAL_ITEM ,
+    'file' => 'cgproduct.admin.inc',
+  );
+
+  $items['admin/cgproduct_page'] = array(
+    'title' => 'CGPRODUCT page',
+    'description' => 'CGPRODUCT content',
+    'page callback' => '_cgproduct_page',
+    //'page callback' => 'drupal_get_form',
+    //'page arguments' => array('_cgproduct_page'),
+    'access arguments' => array('access cgproduct pages'),
+    //'type' => MENU_NORMAL_ITEM,
+    'file' => 'cgproduct.user.inc',
+  );
+
+  $items['admin/cgproduct_update'] = array(
+    'title' => 'Cgproduct Update',
+    'description' => 'CGPRODUCT update',
+    //'page callback' => '_cgproduct_page',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('_cgproduct_update_form', 2),
+    'access arguments' => array('access cgproduct pages'),
+    //'type' => MENU_NORMAL_ITEM,
+    'file' => 'cgproduct.update.inc',
+  );
+
+  $items['admin/cgproduct_edit/%pid'] = array(
+    'title' => 'Cgproduct Edit',
+    'description' => 'Cgproduct edit',
+    'page callback' => '_cgproduct_edit',
+    //'page callback' => 'drupal_get_form',
+    'page arguments' => array(2),
+    'access arguments' => array('access cgproduct pages'),
+    //'type' => MENU_NORMAL_ITEM,
+    'file' => 'cgproduct.update.inc',
+  );
+  $items['admin/settings/xyz'] = array(
+    'title' => 'Settings for xyz',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('cgproduct_xyz_settings'),
+    'access arguments' => array('access cgproduct settings'),
+    'file' => 'cgproduct.admin.inc',
+  );
+
+  return $items;
+}
+
+function cgproduct_mail($key, &$message, $params) {
+  if (isset($params['subject'])) {
+    $message['subject'] = 'Subject of the mail';
+  }
+  if (isset($params['body'])) {
+    $message['body'][] = '<a href="http://www.google.com">Body of the mail</a>';
+  }
+  if (isset($params['headers']) && is_array($params['headers'])) {
+    $message['headers'] += array('X-Akash' => 'header of the mail');
+  }
+}
+
+
+function pid_load($pid){
+  //dsm($pid);
+
+  $query = db_select('product', 'p')
+    ->condition('p.pid', $pid, '=')
+    ->fields('p', array('pid','pname', 'pcolor', 'pdescription', 'ptype'))
+    ->range(0, 50);
+
+    $var = '';
+    $t_name = '';
+    $t_color='';
+    $t_desc='';
+    $t_type='';
+
+    $result = $query->execute();
+
+    while($record = $result->fetchAssoc()) {
+
+        $t_name = $record['pname'];
+        $t_color=$record['pcolor'];
+        $t_desc=$record['pdescription'];
+        $t_type=$record['ptype'];
+       //return $record['pname'].'<br>';
+
+        //return 'aka';
+        //'#markup' => 'Product Title:  ';
+    }
+
+  $items['as']=array('pid'=>$pid,
+    'name' => $t_name,
+    'color' => $t_color,
+    'desc' => $t_desc,
+    'type' => $t_type);
+  return $items;
+
+}
+
+function _cgproduct_edit($pid){
+  return drupal_get_form('_cgproduct_update_form',$pid);
+}
+
+
+function cgproduct_theme($existing, $type, $theme, $path) {
+  $items = array();
+  $items['_cgproduct_update_form'] = array(
+    'render element' => 'form',
+    //'template' => 'cgproduct',
+  );
+  return $items;
+}
+
+// function theme__cgproduct_update_form($vars) {
+//   dsm('theme function is called');
+
+//   $form = $vars['form'];
+//   $out = '<div class="update-form">';
+//   $out .= drupal_render($form['pid']);
+//   $out .= drupal_render($form['title']);
+//   $out .= drupal_render($form['submit']);
+//   $out .= drupal_render_children($form);
+//   $out .= '</div>';
+//   return $out;
+
+// }
+
+// function cgproduct_preprocess__cgproduct_update_form(&$vars) {
+//   dsm('preprocess is being called');
+//   $vars['my_custom_var'] = 'red';
+//   $vars['form']['pid'] = array('#markup' => 'sss ss  xyz');
+// }
+
+
+// function _cgproduct_give_access() {
+//   //global $user;
+//   //dsm($user);
+//   //return TRUE;
+// 	return user_access('access cgproduct pages');
+
+// }
+
+// function _cgproduct_display_title($title) {
+//   return 'welcome';
+// }
+
+//Implementation of hook_permission()
+function cgproduct_permission() {
+  $items = array();
+  $items['access cgproduct pages'] = array(
+    'title' => 'Allow access to cgproduct pages',
+    'description' => 'changes permission',
+  );
+  $items['access cgproduct settings'] = array(
+    'title' => 'Allow access to cgproduct settings',
+    'description' => 'Setting to cg product',
+  );
+  return $items;
+}

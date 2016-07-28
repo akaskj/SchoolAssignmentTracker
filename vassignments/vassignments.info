@@ -1,0 +1,4 @@
+name = vassignments
+description = to view assignments
+core = 7.x
+version = "7.x-1.x-dev"
